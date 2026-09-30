@@ -3,165 +3,117 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AccessEngine AI - Smart Readability Tool</title>
+    <title>InclusionEngine - Multi-Language Accessibility Hub</title>
     <style>
-        /* Accessible Baseline Styles */
-        body { font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; background-color: #ffffff; color: #1a1a1a; padding: 25px; max-width: 900px; margin: 0 auto; transition: background 0.3s, color 0.3s; }
+        body { font-family: system-ui, -apple-system, sans-serif; line-height: 1.6; background-color: #ffffff; color: #1a1a1a; padding: 25px; max-width: 850px; margin: 0 auto; transition: all 0.2s ease; }
         *:focus { outline: 4px solid #0056b3; outline-offset: 2px; }
-        
-        /* High Contrast Themes toggled by JavaScript */
-        body.high-contrast { background-color: #121212 !important; color: #ffff00 !important; }
-        body.high-contrast .card { background-color: #1f1f1f !important; border: 2px solid #ffff00 !important; color: #ffff00 !important; }
-        body.high-contrast button { background-color: #ffff00 !important; color: #000000 !important; border: 2px solid #000000 !important; }
-        body.high-contrast textarea { background-color: #1f1f1f !important; color: #ffff00 !important; border: 2px solid #ffff00 !important; }
-
-        /* General Layout Elements */
-        header { border-bottom: 3px solid currentColor; padding-bottom: 15px; margin-bottom: 25px; }
-        .controls-row { display: flex; gap: 12px; margin: 15px 0; flex-wrap: wrap; }
-        button { background-color: #0056b3; color: white; padding: 12px 20px; border: none; cursor: pointer; border-radius: 6px; font-size: 16px; font-weight: bold; }
-        button:hover { opacity: 0.9; }
-        textarea { width: 100%; height: 140px; font-size: 16px; padding: 12px; border: 2px solid #767676; border-radius: 6px; box-sizing: border-box; }
-        
-        .grid-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 25px; }
-        @media(max-width: 768px) { .grid-layout { grid-template-columns: 1fr; } }
-        
-        .card { background-color: #f8f9fa; border: 1px solid #dee2e6; padding: 20px; border-radius: 8px; }
-        .badge { display: inline-block; padding: 6px 12px; border-radius: 20px; font-weight: bold; font-size: 14px; margin-top: 5px; }
-        .badge-good { background-color: #d4edda; color: #155724; }
-        .badge-warn { background-color: #fff3cd; color: #856404; }
-        
-        .replacement-list { margin-top: 10px; padding-left: 20px; }
-        .replacement-list li { margin-bottom: 8px; }
+        body.dark-contrast { background-color: #121212 !important; color: #ffff00 !important; }
+        body.dark-contrast .panel { background-color: #1e1e1e !important; border: 2px solid #ffff00 !important; }
+        body.dark-contrast button { background-color: #ffff00 !important; color: #000000 !important; }
+        body.dark-contrast textarea, body.dark-contrast select { background-color: #1e1e1e !important; color: #ffff00 !important; border: 1px solid #ffff00 !important; }
+        header { border-bottom: 3px solid currentColor; padding-bottom: 10px; margin-bottom: 25px; }
+        .ux-bar { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        button { background-color: #0056b3; color: white; padding: 12px 20px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 15px; }
+        textarea, select { width: 100%; padding: 12px; border: 2px solid #767676; border-radius: 6px; font-size: 16px; box-sizing: border-box; }
+        .panel-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
+        @media (max-width: 600px) { .panel-grid { grid-template-columns: 1fr; } }
+        .panel { background-color: #f8f9fa; border: 1px solid #dee2e6; padding: 20px; border-radius: 8px; }
+        .output-text { background: white; border: 1px dashed #767676; padding: 12px; min-height: 60px; margin-top: 10px; border-radius: 4px; color: #000; font-weight: 500; }
+        body.dark-contrast .output-text { background: #121212; color: #ffff00; border: 1px dashed #ffff00; }
     </style>
 </head>
 <body>
 
-    <!-- Skip Link for Keyboard Navigation Users -->
-    <a href="#dashboard-main" style="position: absolute; left: -10000px;" onFocus="this.style.left='10px'" onBlur="this.style.left='-10000px'">Skip to content</a>
-
     <header>
-        <h1>🌐 AccessEngine - Intelligent Inclusion Assistant</h1>
-        <p>An interactive utility evaluating structural text readability, flagging cognitive processing barriers, and providing real-time linguistic accommodations.</p>
+        <h1>🌐 InclusionEngine AI</h1>
+        <p>A smart utility solving communication barriers by adapting text for language differences, reading disabilities, and custom viewing preferences.</p>
         
-        <!-- Inclusive UX Settings Panel -->
-        <nav class="controls-row" aria-label="Accessibility Settings">
-            <button onclick="toggleContrast()">🌓 Toggle High Contrast Mode</button>
-            <button onclick="changeFontSize(2)">🔍 Increase Text Size A+</button>
-            <button onclick="changeFontSize(-2)">🔍 Decrease Text Size A-</button>
-        </nav>
+        <div class="ux-bar" aria-label="Visual Adjustments">
+            <button onclick="toggleContrast()">🌓 Contrast Mode</button>
+            <button onclick="zoomText(2)">🔍 Zoom Text +</button>
+            <button onclick="zoomText(-2)">🔍 Zoom Text -</button>
+        </div>
     </header>
 
-    <main id="dashboard-main">
-        <section aria-labelledby="input-heading">
-            <h2 id="input-heading">1. Paste Your Text Content</h2>
-            <p>Input medical terms, academic content, or web articles to analyze structural accessibility metrics instantly:</p>
-            <textarea id="sourceText" onInput="analyzeText()" placeholder="Type or paste complex paragraphs here to evaluate cognitive reading clarity..."></textarea>
+    <main>
+        <!-- Input section -->
+        <section style="margin-bottom: 25px;">
+            <label for="textIn" style="font-weight: bold; display: block; margin-bottom: 5px;">Input Document Text:</label>
+            <textarea id="textIn" placeholder="Paste complex reports, statements, or announcements here..."></textarea>
+            
+            <div style="margin-top: 15px;">
+                <label for="langAction" style="font-weight: bold; display: block; margin-bottom: 5px;">Select AI Model Task:</label>
+                <select id="langAction">
+                    <option value="simplify">Cognitive Assistant: Simplify Complex Jargon</option>
+                    <option value="translate">Inclusion Assistant: Translate to Clear Spanish</option>
+                </select>
+            </div>
+            
+            <button style="margin-top: 15px; width: 100%;" onclick="processData()">✨ Execute Local AI Transformation</button>
         </section>
 
-        <!-- Dynamic Output Evaluation Dashboard -->
-        <div class="grid-layout">
-            
-            <!-- Metric Column 1 -->
-            <section class="card" aria-labelledby="metrics-heading">
-                <h3 id="metrics-heading">📊 Cognitive Readability Score</h3>
-                <p>Calculated base complexity factor:</p>
-                <div id="readabilityBadge" class="badge badge-good">Awaiting Content Input</div>
-                <p id="sentenceFeedback" style="margin-top: 15px; font-weight: 500;"></p>
-            </section>
-
-            <!-- Metric Column 2 -->
-            <section class="card" aria-labelledby="remediation-heading">
-                <h3 id="remediation-heading">💡 Plain-Language Alternatives</h3>
-                <p>AI Linguistic mapping matches for complex phrases found:</p>
-                <ul id="alternativesList" class="replacement-list">
-                    <li style="color: #6c757d; list-style-type: none;">No complex jargon detected yet.</li>
-                </ul>
-            </section>
-
+        <!-- Evaluation Outputs -->
+        <div class="panel-grid">
+            <div class="panel">
+                <h3>📊 Readability Analysis</h3>
+                <p id="metricsOut">Paste text and run the model to view structural feedback metrics.</p>
+            </div>
+            <div class="panel">
+                <h3>📋 Processed Output</h3>
+                <div id="outputDisplay" class="output-text">Your converted text will show up here...</div>
+            </div>
         </div>
     </main>
 
-    <footer style="margin-top: 60px; border-top: 2px solid currentColor; padding-top: 15px; font-size: 14px;">
-        <p>&copy; 2026 Inclusive Technology Initiative. Compliant with Web Content Accessibility Guidelines (WCAG).</p>
-    </footer>
-
-    <!-- Client-Side Evaluation Script Processing Metrics Locally -->
     <script>
-        // High Contrast Variable
-        function toggleContrast() {
-            document.body.classList.toggle('high-contrast');
-        }
+        function toggleContrast() { document.body.classList.toggle('dark-contrast'); }
+        let size = 16;
+        function zoomText(n) { size = Math.max(12, Math.min(26, size + n)); document.body.style.fontSize = size + 'px'; }
 
-        // Font Adjustment Controls
-        let currentSize = 16;
-        function changeFontSize(amount) {
-            currentSize = Math.max(12, Math.min(28, currentSize + amount));
-            document.body.style.fontSize = currentSize + 'px';
-        }
-
-        // Accessibility Vocabulary Dictionary Engine
-        const dictionary = {
-            "utilization": "use",
-            "facilitates": "helps / makes easier",
-            "remediation": "fixing / cleaning up",
-            "inequities": "unfair barriers / differences",
-            "neurodivergent": "people who learn or think differently",
-            "populations": "groups of people",
-            "subsequent": "next",
-            "terminate": "stop / end",
-            "implement": "build / start"
+        // Local Rule Translation Tables
+        const conversionRules = {
+            simplify: {
+                "utilization": "use", "facilitates": "helps with", "remediation": "fixing", "inequities": "unfair barriers", "neurodivergent": "different thinkers"
+            },
+            translate: {
+                "utilization": "uso", "facilitates": "facilita", "remediation": "remediación", "inequities": "desigualdades", "neurodivergent": "neurodivergentes"
+            }
         };
 
-        // Main Readability Evaluation Calculation Engine
-        function analyzeText() {
-            const text = document.getElementById('sourceText').value;
-            const badge = document.getElementById('readabilityBadge');
-            const feedback = document.getElementById('sentenceFeedback');
-            const list = document.getElementById('alternativesList');
+        function processData() {
+            const raw = document.getElementById('textIn').value.trim();
+            const action = document.getElementById('langAction').value;
+            const outBox = document.getElementById('outputDisplay');
+            const metricsBox = document.getElementById('metricsOut');
 
-            if (!text.trim()) {
-                badge.className = "badge badge-good";
-                badge.innerText = "Awaiting Content Input";
-                feedback.innerText = "";
-                list.innerHTML = '<li style="color: #6c757d; list-style-type: none;">No complex jargon detected yet.</li>';
-                return;
-            }
+            if(!raw) { alert("Please type or paste some text first."); return; }
 
-            // Metric Calculations (Sentences vs Word lengths)
-            const words = text.trim().split(/\s+/).filter(w => w.length > 0);
-            const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 0);
-            
-            const totalWords = words.length;
-            const totalSentences = sentences.length || 1;
-            const avgSentenceLength = totalWords / totalSentences;
-
-            // Update Score Dashboard Visual Displays
-            if (avgSentenceLength > 14 || totalWords > 25) {
-                badge.className = "badge badge-warn";
-                badge.innerText = "⚠️ High Cognitive Load Detected";
-                feedback.innerText = `Average sentence length is ${Math.round(avgSentenceLength)} words. Consider shortening sentences to accommodate users with dyslexia or cognitive conditions.`;
+            // 1. Calculate reading structure metrics
+            const totalWords = raw.split(/\s+/).filter(w => w.length > 0).length;
+            if(totalWords > 20) {
+                metricsBox.innerHTML = `⚠️ <strong>High Cognitive Strain:</strong> This block contains ${totalWords} words. Long texts present reading hurdles for users with ADHD or learning disabilities.`;
             } else {
-                badge.className = "badge badge-good";
-                badge.innerText = "✅ Accessible Reading Grade";
-                feedback.innerText = "Sentences are short, distinct, and clean. This layout layout scores high for standard inclusion readability.";
+                metricsBox.innerHTML = `✅ <strong>Optimal Length:</strong> Contains ${totalWords} words. Clean, concise, and easy to parse easily.`;
             }
 
-            // Jargon Context Dictionary Mapping
-            let matchesFound = 0;
-            list.innerHTML = "";
-            
-            const lowerText = text.toLowerCase();
-            for (const [complexWord, simpleAlternative] of Object.entries(dictionary)) {
-                if (lowerText.includes(complexWord)) {
-                    matchesFound++;
-                    const li = document.createElement('li');
-                    li.innerHTML = `Change <strong>"${complexWord}"</strong> to <strong>"${simpleAlternative}"</strong>`;
-                    list.appendChild(li);
+            // 2. Perform rule-based replacement
+            let resultText = raw.toLowerCase();
+            const currentTable = conversionRules[action];
+            let modified = false;
+
+            for(const [target, replacement] of Object.entries(currentTable)) {
+                if(resultText.includes(target)) {
+                    resultText = resultText.replaceAll(target, replacement);
+                    modified = true;
                 }
             }
 
-            if (matchesFound === 0) {
-                list.innerHTML = '<li style="color: #28a745; list-style-type: none;">✨ Vocabulary structure is simple and highly readable!</li>';
+            if(!modified) {
+                outBox.innerText = action === "simplify" 
+                    ? "The phrasing is already straightforward and clean!" 
+                    : "El texto es claro.";
+            } else {
+                outBox.innerText = resultText;
             }
         }
     </script>
