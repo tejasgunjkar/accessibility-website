@@ -3,13 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Accessibility Hub</title>
+    <title>AccessAI - Smart Content Adapter</title>
     <style>
         body { font-family: Arial, sans-serif; line-height: 1.6; background-color: #ffffff; color: #212121; padding: 30px; max-width: 800px; margin: 0 auto; }
-        *:focus { outline: 3px solid #0056b3; }
+        *:focus { outline: 3px solid #0056b3; outline-offset: 2px; }
         nav a { margin-right: 15px; color: #0056b3; font-weight: bold; }
         main { margin-top: 30px; }
-        button { background-color: #0056b3; color: white; padding: 10px 20px; border: none; cursor: pointer; border-radius: 4px; font-size: 16px; }
+        textarea { width: 100%; height: 120px; font-size: 16px; padding: 10px; margin: 10px 0; border: 2px solid #ccc; border-radius: 4px; }
+        button { background-color: #0056b3; color: white; padding: 12px 24px; border: none; cursor: pointer; border-radius: 4px; font-size: 16px; font-weight: bold; }
+        button:disabled { background-color: #cccccc; cursor: not-allowed; }
+        .output-box { border: 2px solid #212121; padding: 15px; min-height: 80px; margin-top: 15px; background-color: #f9f9f9; border-radius: 4px; white-space: pre-wrap; }
+        .config-box { background-color: #fff3cd; border: 1px solid #ffeeba; padding: 15px; border-radius: 4px; margin-bottom: 20px; }
+        .config-box input { width: 70%; padding: 8px; font-size: 14px; }
     </style>
 </head>
 <body>
@@ -17,18 +22,88 @@
         <h1>🌐 AccessAI Portal</h1>
         <nav aria-label="Main Menu">
             <a href="#">Home</a>
-            <a href="#about">About Accessibility</a>
+            <a href="#ai-tool">AI Simplifier Tool</a>
         </nav>
     </header>
+
     <main>
-        <section id="about">
-            <h2>AI for Accessibility & Inclusion</h2>
-            <p>Welcome to your deployed website! This application layout is built using clean structural guidelines, high contrast baseline styling, and logical document ordering to support users navigating with assistive technologies.</p>
-            <button onclick="alert('Digital accessibility barriers removed successfully!')">Test Website Interaction</button>
+        <!-- AI Key Configuration Safe Input Window -->
+        <section class="config-box" aria-label="API Setup">
+            <h3>🔑 Step 1: Link Your AI Engine</h3>
+            <p>Paste your Google Gemini API Key below to activate live processing features securely in your browser:</p>
+            <input type="password" id="apiKeyInput" placeholder="AIzaSy..." aria-label="Gemini API Key input field">
+        </section>
+
+        <!-- Main Accessibility Conversion Tool Layout -->
+        <section id="ai-tool" aria-labelledby="tool-heading">
+            <h2 id="tool-heading">🧠 Step 2: Convert Complex Documents to Simple Language</h2>
+            <p>Paste medical reports, complex conditions, legal jargon, or confusing text below. Our AI will automatically rewrite it into clear, simple language for users with cognitive or learning differences.</p>
+            
+            <textarea id="inputText" placeholder="Paste difficult or confusing text data here..." aria-label="Source text window"></textarea>
+            
+            <button id="processBtn" onclick="runAI()">✨ Simplify Text via Gemini AI</button>
+
+            <h3>📋 Plain Language Output:</h3>
+            <div id="outputText" class="output-box" role="region" aria-live="polite">Your smart, clean text summary will show up right here after processing.</div>
         </section>
     </main>
+
     <footer style="margin-top: 50px; border-top: 1px solid #ccc; padding-top: 10px;">
         <p>&copy; 2026 AI Universal Inclusion Project</p>
     </footer>
+
+    <!-- Direct Browser Script to run Gemini AI safely without a Node Terminal -->
+    <script>
+        async function runAI() {
+            const apiKey = document.getElementById('apiKeyInput').value.trim();
+            const textToProcess = document.getElementById('inputText').value.trim();
+            const outputDiv = document.getElementById('outputText');
+            const button = document.getElementById('processBtn');
+
+            if (!apiKey) {
+                alert("Please paste your Gemini API key into the gold box first!");
+                return;
+            }
+            if (!textToProcess) {
+                alert("Please paste some complex text into the window to simplify.");
+                return;
+            }
+
+            button.disabled = true;
+            button.innerText = "AI is rewriting your content...";
+            outputDiv.innerText = "Analyzing text context details and breaking down barriers...";
+
+            try {
+                // Connects directly to Google's fast deployment web gateway
+                const targetUrl = `https://googleapis.com{apiKey}`;
+                
+                const response = await fetch(targetUrl, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{
+                                text: `Rewrite the following text into plain, simple, highly accessible language suited for users with cognitive or learning disabilities. Maintain the core meaning but use short sentences and absolute clarity:\n\n${textToProcess}`
+                            }]
+                        }]
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.candidates && data.candidates[0].content.parts[0].text) {
+                    outputDiv.innerText = data.candidates[0].content.parts[0].text;
+                } else {
+                    outputDiv.innerText = "Error: Could not read response from Google. Verify your API Key is correct.";
+                }
+            } catch (error) {
+                console.error(error);
+                outputDiv.innerText = "Connection failed. Please double-check your API key or network setup.";
+            } finally {
+                button.disabled = false;
+                button.innerText = "✨ Simplify Text via Gemini AI";
+            }
+        }
+    </script>
 </body>
 </html>
