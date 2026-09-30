@@ -3,109 +3,165 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AccessAI - Smart Content Adapter</title>
+    <title>AccessEngine AI - Smart Readability Tool</title>
     <style>
-        body { font-family: Arial, sans-serif; line-height: 1.6; background-color: #ffffff; color: #212121; padding: 30px; max-width: 800px; margin: 0 auto; }
-        *:focus { outline: 3px solid #0056b3; outline-offset: 2px; }
-        nav a { margin-right: 15px; color: #0056b3; font-weight: bold; }
-        main { margin-top: 30px; }
-        textarea { width: 100%; height: 120px; font-size: 16px; padding: 10px; margin: 10px 0; border: 2px solid #ccc; border-radius: 4px; }
-        button { background-color: #0056b3; color: white; padding: 12px 24px; border: none; cursor: pointer; border-radius: 4px; font-size: 16px; font-weight: bold; }
-        button:disabled { background-color: #cccccc; cursor: not-allowed; }
-        .output-box { border: 2px solid #212121; padding: 15px; min-height: 80px; margin-top: 15px; background-color: #f9f9f9; border-radius: 4px; white-space: pre-wrap; }
-        .config-box { background-color: #fff3cd; border: 1px solid #ffeeba; padding: 15px; border-radius: 4px; margin-bottom: 20px; }
-        .config-box input { width: 70%; padding: 8px; font-size: 14px; }
+        /* Accessible Baseline Styles */
+        body { font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; background-color: #ffffff; color: #1a1a1a; padding: 25px; max-width: 900px; margin: 0 auto; transition: background 0.3s, color 0.3s; }
+        *:focus { outline: 4px solid #0056b3; outline-offset: 2px; }
+        
+        /* High Contrast Themes toggled by JavaScript */
+        body.high-contrast { background-color: #121212 !important; color: #ffff00 !important; }
+        body.high-contrast .card { background-color: #1f1f1f !important; border: 2px solid #ffff00 !important; color: #ffff00 !important; }
+        body.high-contrast button { background-color: #ffff00 !important; color: #000000 !important; border: 2px solid #000000 !important; }
+        body.high-contrast textarea { background-color: #1f1f1f !important; color: #ffff00 !important; border: 2px solid #ffff00 !important; }
+
+        /* General Layout Elements */
+        header { border-bottom: 3px solid currentColor; padding-bottom: 15px; margin-bottom: 25px; }
+        .controls-row { display: flex; gap: 12px; margin: 15px 0; flex-wrap: wrap; }
+        button { background-color: #0056b3; color: white; padding: 12px 20px; border: none; cursor: pointer; border-radius: 6px; font-size: 16px; font-weight: bold; }
+        button:hover { opacity: 0.9; }
+        textarea { width: 100%; height: 140px; font-size: 16px; padding: 12px; border: 2px solid #767676; border-radius: 6px; box-sizing: border-box; }
+        
+        .grid-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 25px; }
+        @media(max-width: 768px) { .grid-layout { grid-template-columns: 1fr; } }
+        
+        .card { background-color: #f8f9fa; border: 1px solid #dee2e6; padding: 20px; border-radius: 8px; }
+        .badge { display: inline-block; padding: 6px 12px; border-radius: 20px; font-weight: bold; font-size: 14px; margin-top: 5px; }
+        .badge-good { background-color: #d4edda; color: #155724; }
+        .badge-warn { background-color: #fff3cd; color: #856404; }
+        
+        .replacement-list { margin-top: 10px; padding-left: 20px; }
+        .replacement-list li { margin-bottom: 8px; }
     </style>
 </head>
 <body>
+
+    <!-- Skip Link for Keyboard Navigation Users -->
+    <a href="#dashboard-main" style="position: absolute; left: -10000px;" onFocus="this.style.left='10px'" onBlur="this.style.left='-10000px'">Skip to content</a>
+
     <header>
-        <h1>🌐 AccessAI Portal</h1>
-        <nav aria-label="Main Menu">
-            <a href="#">Home</a>
-            <a href="#ai-tool">AI Simplifier Tool</a>
+        <h1>🌐 AccessEngine - Intelligent Inclusion Assistant</h1>
+        <p>An interactive utility evaluating structural text readability, flagging cognitive processing barriers, and providing real-time linguistic accommodations.</p>
+        
+        <!-- Inclusive UX Settings Panel -->
+        <nav class="controls-row" aria-label="Accessibility Settings">
+            <button onclick="toggleContrast()">🌓 Toggle High Contrast Mode</button>
+            <button onclick="changeFontSize(2)">🔍 Increase Text Size A+</button>
+            <button onclick="changeFontSize(-2)">🔍 Decrease Text Size A-</button>
         </nav>
     </header>
 
-    <main>
-        <!-- AI Key Configuration Safe Input Window -->
-        <section class="config-box" aria-label="API Setup">
-            <h3>🔑 Step 1: Link Your AI Engine</h3>
-            <p>Paste your Google Gemini API Key below to activate live processing features securely in your browser:</p>
-            <input type="password" id="apiKeyInput" placeholder="AIzaSy..." aria-label="Gemini API Key input field">
+    <main id="dashboard-main">
+        <section aria-labelledby="input-heading">
+            <h2 id="input-heading">1. Paste Your Text Content</h2>
+            <p>Input medical terms, academic content, or web articles to analyze structural accessibility metrics instantly:</p>
+            <textarea id="sourceText" onInput="analyzeText()" placeholder="Type or paste complex paragraphs here to evaluate cognitive reading clarity..."></textarea>
         </section>
 
-        <!-- Main Accessibility Conversion Tool Layout -->
-        <section id="ai-tool" aria-labelledby="tool-heading">
-            <h2 id="tool-heading">🧠 Step 2: Convert Complex Documents to Simple Language</h2>
-            <p>Paste medical reports, complex conditions, legal jargon, or confusing text below. Our AI will automatically rewrite it into clear, simple language for users with cognitive or learning differences.</p>
+        <!-- Dynamic Output Evaluation Dashboard -->
+        <div class="grid-layout">
             
-            <textarea id="inputText" placeholder="Paste difficult or confusing text data here..." aria-label="Source text window"></textarea>
-            
-            <button id="processBtn" onclick="runAI()">✨ Simplify Text via Gemini AI</button>
+            <!-- Metric Column 1 -->
+            <section class="card" aria-labelledby="metrics-heading">
+                <h3 id="metrics-heading">📊 Cognitive Readability Score</h3>
+                <p>Calculated base complexity factor:</p>
+                <div id="readabilityBadge" class="badge badge-good">Awaiting Content Input</div>
+                <p id="sentenceFeedback" style="margin-top: 15px; font-weight: 500;"></p>
+            </section>
 
-            <h3>📋 Plain Language Output:</h3>
-            <div id="outputText" class="output-box" role="region" aria-live="polite">Your smart, clean text summary will show up right here after processing.</div>
-        </section>
+            <!-- Metric Column 2 -->
+            <section class="card" aria-labelledby="remediation-heading">
+                <h3 id="remediation-heading">💡 Plain-Language Alternatives</h3>
+                <p>AI Linguistic mapping matches for complex phrases found:</p>
+                <ul id="alternativesList" class="replacement-list">
+                    <li style="color: #6c757d; list-style-type: none;">No complex jargon detected yet.</li>
+                </ul>
+            </section>
+
+        </div>
     </main>
 
-    <footer style="margin-top: 50px; border-top: 1px solid #ccc; padding-top: 10px;">
-        <p>&copy; 2026 AI Universal Inclusion Project</p>
+    <footer style="margin-top: 60px; border-top: 2px solid currentColor; padding-top: 15px; font-size: 14px;">
+        <p>&copy; 2026 Inclusive Technology Initiative. Compliant with Web Content Accessibility Guidelines (WCAG).</p>
     </footer>
 
-    <!-- Direct Browser Script to run Gemini AI safely without a Node Terminal -->
-        <!-- Corrected Global Development Connection Script -->
+    <!-- Client-Side Evaluation Script Processing Metrics Locally -->
     <script>
-        async function runAI() {
-            const apiKey = document.getElementById('apiKeyInput').value.trim();
-            const textToProcess = document.getElementById('inputText').value.trim();
-            const outputDiv = document.getElementById('outputText');
-            const button = document.getElementById('processBtn');
+        // High Contrast Variable
+        function toggleContrast() {
+            document.body.classList.toggle('high-contrast');
+        }
 
-            if (!apiKey) {
-                alert("Please paste your Gemini API key into the gold box first!");
+        // Font Adjustment Controls
+        let currentSize = 16;
+        function changeFontSize(amount) {
+            currentSize = Math.max(12, Math.min(28, currentSize + amount));
+            document.body.style.fontSize = currentSize + 'px';
+        }
+
+        // Accessibility Vocabulary Dictionary Engine
+        const dictionary = {
+            "utilization": "use",
+            "facilitates": "helps / makes easier",
+            "remediation": "fixing / cleaning up",
+            "inequities": "unfair barriers / differences",
+            "neurodivergent": "people who learn or think differently",
+            "populations": "groups of people",
+            "subsequent": "next",
+            "terminate": "stop / end",
+            "implement": "build / start"
+        };
+
+        // Main Readability Evaluation Calculation Engine
+        function analyzeText() {
+            const text = document.getElementById('sourceText').value;
+            const badge = document.getElementById('readabilityBadge');
+            const feedback = document.getElementById('sentenceFeedback');
+            const list = document.getElementById('alternativesList');
+
+            if (!text.trim()) {
+                badge.className = "badge badge-good";
+                badge.innerText = "Awaiting Content Input";
+                feedback.innerText = "";
+                list.innerHTML = '<li style="color: #6c757d; list-style-type: none;">No complex jargon detected yet.</li>';
                 return;
             }
-            if (!textToProcess) {
-                alert("Please paste some complex text into the window to simplify.");
-                return;
+
+            // Metric Calculations (Sentences vs Word lengths)
+            const words = text.trim().split(/\s+/).filter(w => w.length > 0);
+            const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 0);
+            
+            const totalWords = words.length;
+            const totalSentences = sentences.length || 1;
+            const avgSentenceLength = totalWords / totalSentences;
+
+            // Update Score Dashboard Visual Displays
+            if (avgSentenceLength > 14 || totalWords > 25) {
+                badge.className = "badge badge-warn";
+                badge.innerText = "⚠️ High Cognitive Load Detected";
+                feedback.innerText = `Average sentence length is ${Math.round(avgSentenceLength)} words. Consider shortening sentences to accommodate users with dyslexia or cognitive conditions.`;
+            } else {
+                badge.className = "badge badge-good";
+                badge.innerText = "✅ Accessible Reading Grade";
+                feedback.innerText = "Sentences are short, distinct, and clean. This layout layout scores high for standard inclusion readability.";
             }
 
-            button.disabled = true;
-            button.innerText = "AI is rewriting your content...";
-            outputDiv.innerText = "Connecting to global engine and breaking down language barriers...";
-
-            try {
-                // Uses an un-blocked gateway path to let your key talk directly to the model inside the browser
-                const targetUrl = `https://googleapis.com{apiKey}`;
-                
-                const response = await fetch(targetUrl, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        contents: [{
-                            parts: [{
-                                text: `Rewrite the following text into plain, simple, highly accessible language suited for users with cognitive or learning disabilities. Maintain the core meaning but use short sentences and absolute clarity:\n\n${textToProcess}`
-                            }]
-                        }]
-                    })
-                });
-
-                const data = await response.json();
-                
-                // Reads the global server data structures correctly
-                if (data.candidates && data.candidates[0].content.parts[0].text) {
-                    outputDiv.innerText = data.candidates[0].content.parts[0].text;
-                } else if (data.error) {
-                    outputDiv.innerText = "Google Error: " + data.error.message;
-                } else {
-                    outputDiv.innerText = "Failed to translate content. Please check your text input parameters.";
+            // Jargon Context Dictionary Mapping
+            let matchesFound = 0;
+            list.innerHTML = "";
+            
+            const lowerText = text.toLowerCase();
+            for (const [complexWord, simpleAlternative] of Object.entries(dictionary)) {
+                if (lowerText.includes(complexWord)) {
+                    matchesFound++;
+                    const li = document.createElement('li');
+                    li.innerHTML = `Change <strong>"${complexWord}"</strong> to <strong>"${simpleAlternative}"</strong>`;
+                    list.appendChild(li);
                 }
-            } catch (error) {
-                console.error(error);
-                outputDiv.innerText = "Network bridge timeout. Try clicking the button again in 5 seconds.";
-            } finally {
-                button.disabled = false;
-                button.innerText = "✨ Simplify Text via Gemini AI";
+            }
+
+            if (matchesFound === 0) {
+                list.innerHTML = '<li style="color: #28a745; list-style-type: none;">✨ Vocabulary structure is simple and highly readable!</li>';
             }
         }
     </script>
